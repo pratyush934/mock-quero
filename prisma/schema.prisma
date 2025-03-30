@@ -74,7 +74,7 @@ model coverLetter {
 
 model IndustryInsight {
   id       String   @id @default(cuid())
-  industry String[]
+  industry String[] 
 
   users        User[]
   salaryRanges Json[]
