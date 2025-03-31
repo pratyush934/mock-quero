@@ -12,7 +12,7 @@ type UseFetchReturnType<T, Args extends any[]> = {
 const useFetch = <T, Args extends any[]>(
   callbackFunction: (...args: Args) => Promise<T>
 ): UseFetchReturnType<T, Args> => {
-    
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<T | undefined>(undefined);
@@ -37,7 +37,7 @@ const useFetch = <T, Args extends any[]>(
       setLoading(false);
     }
   };
-
+  
   return { loading, setLoading, error, data, fn };
 };
 

@@ -1,10 +1,11 @@
 "use client";
+import { updateUser } from "@/actions/user";
+import useFetch from "@/app/hooks/use-fetch";
 import { onBoardingSchema } from "@/app/lib/schema";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
@@ -22,9 +23,19 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { IndustryType } from "@/data/industries";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+export type ValueType = {
+  bio?: string;
+  experience: number;
+  skills?: string[];
+  subIndustry: string;
+  industry: string;
+};
 
 const OnBoardingForm = ({ industries }: { industries: IndustryType[] }) => {
   const [selectIndustry, setSelectIndustry] = useState<
@@ -32,6 +43,13 @@ const OnBoardingForm = ({ industries }: { industries: IndustryType[] }) => {
   >();
 
   const router = useRouter();
+
+  const {
+    loading: updateLoading,
+    error,
+    data: updateResult,
+    fn: updateUserFunction,
+  } = useFetch(updateUser);
 
   const {
     register,
@@ -43,20 +61,37 @@ const OnBoardingForm = ({ industries }: { industries: IndustryType[] }) => {
     resolver: zodResolver(onBoardingSchema),
   });
 
-  const watchIndustry = watch("industry")
+  const watchIndustry = watch("industry");
 
-  const onSubmit = async (values ) => {
+  const onSubmit = async (values: ValueType) => {
     console.log(values);
+    try {
+      const formatedIndustry = `${values.industry} - ${values.subIndustry}`
+        .toLowerCase()
+        .replace(/ /g, "-");
+
+      await updateUserFunction({
+        ...values,
+        industry: formatedIndustry,
+      });
+    } catch (error) {
+      console.log("There is an issue in onSubmit", error);
+    }
   };
+
+  useEffect(() => {
+    if (updateResult && !updateLoading) {
+      toast.success("Profile completed Successfully");
+      router.push("/dashboard");
+      router.refresh();
+    }
+  }, [updateResult, updateLoading, router]);
 
   return (
     <div className="flex items-center justify-center bg-background">
       <Card className="w-full mt-10 max-w-lg mx-2">
         <CardHeader>
-          <CardTitle>Create project</CardTitle>
-          <CardDescription>
-            Deploy your new project in one-click.
-          </CardDescription>
+          <CardTitle>Complete Your Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -91,36 +126,38 @@ const OnBoardingForm = ({ industries }: { industries: IndustryType[] }) => {
                 </div>
               )}
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subIndustry" className="ml-2 mt-4 mb-0">
-                SubIndustry
-              </Label>
-              <Select
-                onValueChange={(value) => {
-                  setValue("subIndustry", value);
-                }}
-              >
-                <SelectTrigger id="industry" className="mt-2 w-full">
-                  <SelectValue placeholder="Select an Industry" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Specialization</SelectLabel>
-                    {selectIndustry?.subIndustries.map((sub) => (
-                      <SelectItem value={sub} key={sub}>
-                        {sub}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors.industry && (
-                <div className="bg-red text-sm font-black">
-                  {errors.industry.message}
-                </div>
-              )}
-            </div>
+           
+            {watchIndustry && (
+              <div className="space-y-2">
+                <Label htmlFor="subIndustry" className="ml-2 mt-4 mb-0">
+                  SubIndustry
+                </Label>
+                <Select
+                  onValueChange={(value) => {
+                    setValue("subIndustry", value);
+                  }}
+                >
+                  <SelectTrigger id="industry" className="mt-2 w-full">
+                    <SelectValue placeholder="Select an Industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Specialization</SelectLabel>
+                      {selectIndustry?.subIndustries.map((sub) => (
+                        <SelectItem value={sub} key={sub}>
+                          {sub}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {errors.industry && (
+                  <div className="bg-red text-sm font-black">
+                    {errors.industry.message}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="space-y-2 mt-5">
               <Label className="ml-2">Experience</Label>
@@ -175,7 +212,14 @@ const OnBoardingForm = ({ industries }: { industries: IndustryType[] }) => {
               <p className="text-red font-bold font-sm">{errors.bio.message}</p>
             )}
             <Button type="submit" className="w-full w-max-lg mt-5">
-              Complete Profile
+              {updateLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Complete Profile"
+              )}
             </Button>
           </form>
         </CardContent>

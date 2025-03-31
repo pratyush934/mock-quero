@@ -33,6 +33,14 @@ export type userType = {
     industryInsightId?: string; // Optional, matching the relation in Prisma schema
   };
 
+  export type ValueType = {
+    bio?: string;
+    experience: number;
+    skills?: string[];
+    subIndustry: string;
+    industry: string ;
+  };
+
 /* 
 
 model User {

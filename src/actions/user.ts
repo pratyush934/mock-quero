@@ -1,20 +1,21 @@
-"user server";
+"use server";
 
 import prisma from "@/lib/db";
-import { userType } from "@/types/user-type";
+import { userType, ValueType } from "@/types/user-type";
 import { auth } from "@clerk/nextjs/server";
 import { revalidateTag } from "next/cache";
+import { generateAllInsights } from "./dashboard";
 
-export async function updateUser(data: userType) {
+export async function updateUser(data: userType | ValueType) {
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error("unauthroized");
+    throw new Error("unauthorized");
   }
 
   const user = await prisma.user.findUnique({
     where: {
-      clerkId: userId, 
+      clerkId: userId,
     },
   });
 
@@ -23,49 +24,68 @@ export async function updateUser(data: userType) {
   try {
     const result = await prisma.$transaction(
       async (tx) => {
-        const isIndustryExist = await tx.industryInsight.findUnique({
+        // Check if industry exists using proper array query
+        let isIndustryExist = await tx.industryInsight.findFirst({
           where: {
-            industry: { has: data.industry || "" },
+            industry: {
+              has: data.industry || "",
+            },
           },
         });
 
         if (!isIndustryExist) {
-          const createIndustry = await prisma.industryInsight.create({
+
+          const insights = await generateAllInsights(data.industry as string)
+
+          isIndustryExist = await tx.industryInsight.create({
             data: {
               industry: data.industry ? [data.industry] : [],
-              nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 1000),
-              growthRate: data.growthRate || 0, // Provide a default value or use data.growthRate
-              //   demandLevel: data.demandLevel || "medium", // Provide a default value or use data.demandLevel
-              //   marketOutlook: data.marketOutlook || "stable", // Provide a default value or use data.marketOutlook
+              nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), 
+              // growthRate: 0,
+              // demandLevel: "MEDIUM", 
+              // topSkills: [],
+              // marketOutlook: "NEUTRAL", 
+              // keyTrends: [],
+              // recommendedSkills: [],
+              // salaryRanges: [],
+              ...insights
             },
           });
-          if (!createIndustry) {
-            console.log("there is some error exist in creatingIndustry");
+
+          if (!isIndustryExist) {
+            console.log("there is some error exist in isIndustryExist");
           }
         }
-        const updateUser = await prisma.user.update({
+
+        const updateUser = await tx.user.update({
           where: {
             id: user.id,
           },
           data: {
-            indurstry: data.industry,
+            industry: data.industry, // Fixed typo from "indurstry" to "industry"
             skills: data.skills,
             experience: data.experience,
             bio: data.bio,
           },
         });
+
         return { updateUser, isIndustryExist };
       },
       {
-        timeout: 1000,
+        timeout: 10000, // 10 seconds instead of 1 second
       }
     );
+
     revalidateTag("/");
     return result.updateUser;
   } catch (e) {
-    console.log("There is an error in updateUsser", e);
+    console.log("There is an error in updateUser", e);
+    throw e; // Re-throw the error to handle it in the calling function
   }
 }
+
+
+
 
 export async function onBoardingStatus() {
   const { userId } = await auth();
@@ -93,17 +113,18 @@ export async function onBoardingStatus() {
         clerkId: userId,
       },
       select: {
-        indurstry: true,
+        industry: true,
       },
     });
 
     return {
-      isOnBorded: !!getUserForIndustry?.indurstry,
+      isOnBorded: !!getUserForIndustry?.industry,
     };
   } catch (e) {
     console.log(
       "There is still an issue in onBoardingStatus method in catch section",
       e
     );
+    throw e;
   }
 }
