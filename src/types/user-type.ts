@@ -16,30 +16,30 @@
 // };
 
 export type userType = {
-    id: string;
-    clerkId: string;
-    email: string;
-    name?: string; // Optional, as per Prisma schema
-    imageUrl?: string; // Optional, as per Prisma schema
-    industry?: string; // Single optional string, matching Prisma schema
-    updatedAt: Date;
-    createdAt: Date;
-    skills: string[]; // Array of strings, matching Prisma schema
-    bio?: string; // Optional, as per Prisma schema
-    experience: number;
-    growthRate: number;
-    demandLevel?: string; // Optional, as per your definition
-    marketOutlook?: string; // Optional, as per your definition
-    industryInsightId?: string; // Optional, matching the relation in Prisma schema
-  };
+  id: string;
+  clerkId: string;
+  email: string;
+  name?: string; // Optional, as per Prisma schema
+  imageUrl?: string; // Optional, as per Prisma schema
+  industry?: string; // Single optional string, matching Prisma schema
+  updatedAt: Date;
+  createdAt: Date;
+  skills: string[]; // Array of strings, matching Prisma schema
+  bio?: string; // Optional, as per Prisma schema
+  experience: number;
+  growthRate: number;
+  demandLevel?: string; // Optional, as per your definition
+  marketOutlook?: string; // Optional, as per your definition
+  industryInsightId?: string; // Optional, matching the relation in Prisma schema
+};
 
-  export type ValueType = {
-    bio?: string;
-    experience: number;
-    skills?: string[];
-    subIndustry: string;
-    industry: string ;
-  };
+export type ValueType = {
+  bio?: string;
+  experience: number;
+  skills?: string[];
+  subIndustry: string;
+  industry: string;
+};
 
 /* 
 
@@ -79,8 +79,27 @@ export type QuizResultData = {
     options: string[];
     correctAnswer: string;
     explanation?: string;
-    isCorrect?: boolean
-    userAnswer: string
-    answer: string
+    isCorrect?: boolean;
+    userAnswer: string;
+    answer: string;
+  }[];
+};
+
+export type Assessments = {
+  userId: string;
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  quizScore: number;
+  category: string | null;
+  improvementTips: string | null;
+  questions: {
+    question: string;
+    options: string[];
+    correctAnswer: string;
+    explanation?: string;
+    isCorrect?: boolean;
+    userAnswer: string;
+    answer: string;
   }[];
 };
