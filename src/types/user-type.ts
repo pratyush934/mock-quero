@@ -64,3 +64,23 @@ model User {
   industryInsightId String?
 }
 */
+
+export type QuizResultData = {
+  id: string;
+  userId: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  quizScore: number;
+  category: string;
+  improvementTips: string;
+  // isCorrect?: boolean
+  questions: {
+    question: string;
+    options: string[];
+    correctAnswer: string;
+    explanation?: string;
+    isCorrect?: boolean
+    userAnswer: string
+    answer: string
+  }[];
+};

@@ -46,7 +46,6 @@ const OnBoardingForm = ({ industries }: { industries: IndustryType[] }) => {
 
   const {
     loading: updateLoading,
-    error,
     data: updateResult,
     fn: updateUserFunction,
   } = useFetch(updateUser);
