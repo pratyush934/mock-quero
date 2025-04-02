@@ -62,25 +62,25 @@ const Header = async () => {
               <DropdownMenuContent className="mt-2 w-56 bg-black shadow-lg rounded-lg border border-gray-200">
                 <DropdownMenuItem>
                   <Link
-                    href="/ai-resume"
+                    href="/resume"
                     className="flex items-center gap-3 py-2 px-4 hover:bg-black-100 rounded-md w-full"
                   >
                     <FileUser className="h-5 w-5" />
                     <span>Make Resume</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                   <Link
-                    href="/ai-tools"
+                    href="/"
                     className="flex items-center gap-3 py-2 px-4 hover:bg-black-100 rounded-md w-full"
                   >
                     <InspectionPanel className="h-5 w-5" />
                     <span>Cover Letter</span>
                   </Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem>
                   <Link
-                    href="/ai-tools"
+                    href="/interview"
                     className="flex items-center gap-3 py-2 px-4 hover:bg-black-100 rounded-md w-full"
                   >
                     <TvMinimalPlay className="h-5 w-5" />

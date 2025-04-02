@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { revalidatePath } from "next/cache";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export async function saveResume(content: string) {
@@ -72,7 +72,7 @@ export async function getResume() {
     return resume;
   } catch (e) {
     console.log("There is an error in getResume(), ", e);
-    throw Error("There is an issue while getting the resume");
+    // throw new Error("There is an issue while getting the resume");
   }
 }
 
