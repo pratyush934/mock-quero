@@ -9,8 +9,6 @@ const MockInterviewPage = async () => {
     redirect("/")
   }
 
-  // console.log("User ------> in page.tsx", user);
-
   return (
     <div>
       <p className="text-5xl font-bold  gradiengt-title mb-5">Mock Interview page</p>
