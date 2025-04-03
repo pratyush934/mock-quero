@@ -1,10 +1,8 @@
 import { getAssessment } from "@/actions/interview";
 import { Assessments } from "@/types/user-type";
-import React from "react";
-import QuizResult from "./_components/QuizResult";
-import { QuizStats } from "./_components/QuizStats";
-import QuizList from "./_components/QuizList";
 import PerformanceChart from "./_components/PerformanceChart";
+import QuizList from "./_components/QuizList";
+import { QuizStats } from "./_components/QuizStats";
 
 const InterviewPage = async () => {
     

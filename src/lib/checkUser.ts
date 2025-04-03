@@ -39,5 +39,6 @@ export const checkUser = async () => {
     console.log(
       "Error exist while saving or getting the error in lib/checkUser.ts", e
     );
+    throw new Error("Issue exist in checkUser")
   }
 };

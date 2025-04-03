@@ -23,13 +23,17 @@ import { resumeSchema } from "@/app/lib/schema";
 import EntryForm from "./EntryForm";
 import useFetch from "@/app/hooks/use-fetch";
 import { entriesToMarkdown } from "@/app/lib/helper";
-import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
+// import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
 
-export default function ResumeBuilder({ initialContent } : { intialContent: string}) {
+export default function ResumeBuilder({
+  initialContent,
+}: {
+  initialContent: string;
+}) {
   const [activeTab, setActiveTab] = useState("edit");
   const [previewContent, setPreviewContent] = useState(initialContent);
   const { user } = useUser();
-  const [resumeMode, setResumeMode] = useState("preview");
+  const [resumeMode, setResumeMode] = useState<"preview" | "edit">("preview");
 
   const {
     control,
@@ -91,7 +95,7 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
     if (contactInfo.twitter) parts.push(`🐦 [Twitter](${contactInfo.twitter})`);
 
     return parts.length > 0
-      ? `## <div align="center">${user.fullName}</div>
+      ? `## <div align="center">${user?.fullName ?? "Pratyush Sinha"}</div>
         \n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
       : "";
   };
@@ -123,8 +127,17 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
         html2canvas: { scale: 2 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
+      if (element) {
+        console.log(element, opt);
+      } else {
+        console.warn("Element with id 'resume-pdf' not found.");
+      }
 
-      await html2pdf().set(opt).from(element).save();
+      toast.warning(
+        "Sorry we can't generate the pdf as it the pdf function is not working"
+      );
+
+      // await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error("PDF generation error:", error);
     } finally {
@@ -132,7 +145,7 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: typeof formValues) => {
     console.log(data);
     try {
       const formattedContent = previewContent
@@ -205,7 +218,6 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
                     {...register("contactInfo.email")}
                     type="email"
                     placeholder="your@email.com"
-                    error={errors.contactInfo?.email}
                   />
                   {errors.contactInfo?.email && (
                     <p className="text-sm text-red-500">
@@ -268,7 +280,7 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
                     {...field}
                     className="h-32"
                     placeholder="Write a compelling professional summary..."
-                    error={errors.summary}
+                    {...(errors.summary ? { 'aria-invalid': true } : {})}
                   />
                 )}
               />
@@ -288,7 +300,6 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
                     {...field}
                     className="h-32"
                     placeholder="List your key skills..."
-                    error={errors.skills}
                   />
                 )}
               />
@@ -397,7 +408,7 @@ export default function ResumeBuilder({ initialContent } : { intialContent: stri
           <div className="border rounded-lg">
             <MDEditor
               value={previewContent}
-              onChange={setPreviewContent}
+              onChange={(value) => setPreviewContent(value || "")}
               height={800}
               preview={resumeMode}
             />

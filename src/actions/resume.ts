@@ -76,13 +76,7 @@ export async function getResume() {
   }
 }
 
-export async function improveWithAI({
-  content,
-  type,
-}: {
-  content: string;
-  type: any;
-}) {
+export async function improveWithAI({ content, type }: { content: string }) {
   const { userId } = await auth();
 
   if (!userId) throw new Error("Issue with userId");
@@ -96,7 +90,7 @@ export async function improveWithAI({
     },
   });
 
-  console.log("This one is user, ---------->", user);
+  console.log("This one is user, ---------->", type);
 
   if (!user) throw new Error("Not getting user");
 

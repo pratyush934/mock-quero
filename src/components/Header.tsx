@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -69,15 +68,15 @@ const Header = async () => {
                     <span>Make Resume</span>
                   </Link>
                 </DropdownMenuItem>
-                {/* <DropdownMenuItem>
+                <DropdownMenuItem>
                   <Link
-                    href="/"
+                    href="/mock"
                     className="flex items-center gap-3 py-2 px-4 hover:bg-black-100 rounded-md w-full"
                   >
                     <InspectionPanel className="h-5 w-5" />
-                    <span>Cover Letter</span>
+                    <span>Mock Interview</span>
                   </Link>
-                </DropdownMenuItem> */}
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link
                     href="/interview"
