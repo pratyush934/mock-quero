@@ -7,8 +7,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
-import { createFeedback } from "@/lib/actions/general.action"; 
-import { AgentProps } from "@/types/index.types";
+import { createFeedback } from "@/lib/actions/general.action";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -36,8 +35,6 @@ const Agent = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
 
-  console.log(userName, "--->", userId, "---->", interviewId, "---->", feedbackId, "----->", type, "------>", );
-
   useEffect(() => {
     const onCallStart = () => {
       setCallStatus(CallStatus.ACTIVE);
@@ -47,19 +44,10 @@ const Agent = ({
       setCallStatus(CallStatus.FINISHED);
     };
 
-    interface Message {
-      type: string;
-      role: "user" | "system" | "assistant";
-      transcriptType?: string;
-      transcript?: string;
-    }
-
     const onMessage = (message: Message) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
-        if (message.transcript) {
-          const newMessage = { role: message.role, content: message.transcript };
-          setMessages((prev) => [...prev, newMessage]);
-        }
+        const newMessage = { role: message.role, content: message.transcript };
+        setMessages((prev) => [...prev, newMessage]);
       }
     };
 
@@ -206,7 +194,7 @@ const Agent = ({
         </div>
       )}
 
-      <div className="w-full flex justify-center mt-4">
+      <div className="w-full flex justify-center">
         {callStatus !== "ACTIVE" ? (
           <button className="relative btn-call" onClick={() => handleCall()}>
             <span

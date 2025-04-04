@@ -16,7 +16,7 @@ const InterviewCard = ({
   createdAt,
 }: InterviewCardProps) => {
   const feedback = null as Feedback | null;
-  console.log(feedback);
+  // console.log(feedback);
   const normalizedType = /mix/gi.test(type) ? "Mixed" : type;
 
   const formattedDate = dayjs(
